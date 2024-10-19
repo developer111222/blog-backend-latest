@@ -23,7 +23,7 @@ app.use(cookieParser());
 
 // CORS configuration
 const corsOptions = {
-  origin: 'https://blog-front-tau-five.vercel.app/',  // The URL of your frontend
+  origin: 'https://blog-front-tau-five.vercel.app',  // The URL of your frontend
 
    methods: ["GET", "PUT", "POST", "DELETE", "OPTIONS"],
    Headers: true,
