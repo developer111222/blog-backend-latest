@@ -25,11 +25,35 @@ exports.signup = async (req, res) => {
     try {
         // Check if user already exists  
         let user = await User.findOne({ email });
+
         if (user) {
-            return res.status(400).json({ message: 'User already exists' });
+            if (user.isVerified) {
+                return res.status(400).json({ message: 'User already exists. Please login' });
+            } else {
+                // User exists but is not verified, send OTP
+                const otp = generateOTP();
+                user.otp = otp;
+                user.otpExpires = Date.now() + 10 * 60 * 1000; // 10 minutes expiry  
+                await user.save();
+
+                // Send OTP email  
+                const mailOptions = {
+                    to: email,
+                    subject: 'Verify Your Email',
+                    text: `Your OTP is ${otp}. It is valid for 10 minutes.`,
+                };
+
+                try {
+                    await sendEmail(mailOptions);
+                    return res.status(200).json({ message: 'OTP sent to your email for verification' });
+                } catch (sendEmailError) {
+                    console.error('Error sending email:', sendEmailError);
+                    return res.status(500).json({ message: 'Error sending OTP email. Please try again later.' });
+                }
+            }
         }
 
-        // Create a new user  
+        // Create a new user if it doesn't exist  
         user = new User({ email, password });
         await user.save();
 
@@ -48,11 +72,12 @@ exports.signup = async (req, res) => {
 
         try {
             await sendEmail(mailOptions);
-            res.status(200).json({ message: 'OTP sent to your email' });
+            res.status(200).json({ message: 'OTP sent to your email for verification' });
         } catch (sendEmailError) {
             console.error('Error sending email:', sendEmailError);
             return res.status(500).json({ message: 'Error sending OTP email. Please try again later.' });
         }
+
     } catch (error) {
         console.error('Error during signup:', error);
         res.status(500).json({ message: 'Internal server error' });
@@ -98,21 +123,63 @@ exports.verifyuser = async (req, res) => {
         // Generate JWT token  
         const token = generateToken(user);
         // Set the cookie with options (e.g., httpOnly, secure)
-        console.log(token)
-        res.cookie('token', token, {
-            httpOnly: true, secure: process.env.NODE_ENV === 'production',
-            sameSite: "strict",
-
-        })
-
-        // Send the JSON response
-        return res.json({ message: 'Email verified successfully!', token });
+        
+        return res.cookie('token', token, {  
+            httpOnly: true,  
+            path: "/", // cookie path
+        //   Domain: ".onrender.com", // domain for the cookie
+          secure: true, // accessible through HTTP
+          httpOnly: true, // only server can access the cookie
+          sameSite: "none", // enforcement type
+          partitioned: false, 
+        }).status(200).json({ message: "Login successful" })  
 
     } catch (error) {
         console.error('Error during email verification:', error);
         res.status(500).json({ message: 'Internal server error' });
     }
 };
+
+
+//------------------------------resend otp------------------
+
+exports.resendotp=async(req,res)=>{
+    const { email } = req.body;
+    console.log(req.body);
+
+    const user = await User.findOne({ email });
+    
+    try {
+
+        if (user) {
+            if (!user.isVerified) {
+            
+                // User exists but is not verified, send OTP
+                const otp = generateOTP();
+                user.otp = otp;
+                user.otpExpires = Date.now() + 10 * 60 * 1000; // 10 minutes expiry  
+                await user.save();
+
+                // Send OTP email  
+                const mailOptions = {
+                    to: email,
+                    subject: 'Verify Your Email',
+                    text: `Your OTP is ${otp}. It is valid for 10 minutes.`,
+                };
+
+                try {
+                    await sendEmail(mailOptions);
+                    return res.status(200).json({ message: 'OTP sent to your email for verification' });
+                } catch (sendEmailError) {
+                    console.error('Error sending email:', sendEmailError);
+                    return res.status(500).json({ message: 'Error sending OTP email. Please try again later.' });
+                }
+            }
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Internal server error' });
+    }
+}
 
 
 //---------------------------------login controller------------------------------------
@@ -139,7 +206,15 @@ exports.login = async (req, res) => {
         }  
 
         const token = generateToken(user);  
-        res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production' });  
+        return res.cookie('token', token, {  
+            httpOnly: true,  
+            path: "/", // cookie path
+        //   Domain: ".onrender.com", // domain for the cookie
+          secure: true, // accessible through HTTP
+          httpOnly: true, // only server can access the cookie
+          sameSite: "none", // enforcement type
+          partitioned: false, 
+        }).status(200).json({ message: "Login successful" })  
        return res.status(200).json({ message: 'Login successful!', token });  
     } catch (error) {  
         console.error('Error during login:', error);  
