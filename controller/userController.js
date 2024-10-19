@@ -139,8 +139,15 @@ exports.login = async (req, res) => {
         }  
 
         const token = generateToken(user);  
-        res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production' });  
-       return res.status(200).json({ message: 'Login successful!', token });  
+   return res.cookie('token', token, {  
+            httpOnly: true,  
+            path: "/", // cookie path
+        //   Domain: ".onrender.com", // domain for the cookie
+          secure: true, // accessible through HTTP
+          httpOnly: true, // only server can access the cookie
+          sameSite: "none", // enforcement type
+          partitioned: false, 
+        }).status(200).json({ message: "Login successful" })  
     } catch (error) {  
         console.error('Error during login:', error);  
         res.status(500).json({ message: 'Internal server error' });  
