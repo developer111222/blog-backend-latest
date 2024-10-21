@@ -125,13 +125,10 @@ exports.verifyuser = async (req, res) => {
         // Set the cookie with options (e.g., httpOnly, secure)
         
         return res.cookie('token', token, {  
-            httpOnly: true,  
-            path: "/", // cookie path
-        //   Domain: ".onrender.com", // domain for the cookie
-          secure: true, // accessible through HTTP
-          httpOnly: true, // only server can access the cookie
-          sameSite: "strict", // enforcement type
-          partitioned: false, 
+         httpOnly: true,
+    secure: true, // Use true for production over HTTPS
+    sameSite: 'none', // Use None if accessing from a different origin
+  
         }).status(200).json({ message: "Login successful" }) 
 
     } catch (error) {
