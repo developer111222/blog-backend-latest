@@ -207,8 +207,11 @@ exports.login = async (req, res) => {
 
         const token = generateToken(user);  
         return res.cookie('token', token, {  
-         httpOnly: true,
-    secure: true, // Ensure this is set to true when using HTTPS
+      httpOnly: true,
+    secure: true, // Use true for production over HTTPS
+    sameSite: 'None', // Use None if accessing from a different origin
+    path: '/',
+            domain: "https://blog-front-tau-five.vercel.app/"
    
         }).status(200).json({ message: "Login successful" })  
        return res.status(200).json({ message: 'Login successful!', token });  
