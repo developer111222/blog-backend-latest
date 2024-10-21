@@ -207,13 +207,10 @@ exports.login = async (req, res) => {
 
         const token = generateToken(user);  
         return res.cookie('token', token, {  
-            httpOnly: true,  
-            path: "/", // cookie path
-        //   Domain: ".onrender.com", // domain for the cookie
-          secure: true, // accessible through HTTP
-          httpOnly: true, // only server can access the cookie
-          sameSite: "strict", // enforcement type
-          partitioned: false, 
+         httpOnly: true,
+    secure: true, // Ensure this is set to true when using HTTPS
+    sameSite: 'None', // Adjust based on your needs
+    path: '/',
         }).status(200).json({ message: "Login successful" })  
        return res.status(200).json({ message: 'Login successful!', token });  
     } catch (error) {  
