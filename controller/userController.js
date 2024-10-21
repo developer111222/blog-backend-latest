@@ -209,8 +209,8 @@ exports.login = async (req, res) => {
         return res.cookie('token', token, {  
       httpOnly: true,
     secure: true, // Use true for production over HTTPS
-    sameSite: 'None', // Use None if accessing from a different origin
-   domain: "blog-backend-latest-xxss.onrender.com"
+    sameSite: 'strict', // Use None if accessing from a different origin
+  
    
         }).status(200).json({ message: "Login successful" })  
        return res.status(200).json({ message: 'Login successful!', token });  
