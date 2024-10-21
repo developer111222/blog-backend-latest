@@ -210,8 +210,7 @@ exports.login = async (req, res) => {
       httpOnly: true,
     secure: true, // Use true for production over HTTPS
     sameSite: 'None', // Use None if accessing from a different origin
-    path: '/',
-            domain: "blog-front-tau-five.vercel.app"
+   domain: "blog-backend-latest-xxss.onrender.com"
    
         }).status(200).json({ message: "Login successful" })  
        return res.status(200).json({ message: 'Login successful!', token });  
