@@ -209,7 +209,7 @@ exports.login = async (req, res) => {
         return res.cookie('token', token, {  
       httpOnly: true,
     secure: true, // Use true for production over HTTPS
-    sameSite: 'strict', // Use None if accessing from a different origin
+    sameSite: 'none', // Use None if accessing from a different origin
   
    
         }).status(200).json({ message: "Login successful" })  
