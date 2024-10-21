@@ -130,9 +130,9 @@ exports.verifyuser = async (req, res) => {
         //   Domain: ".onrender.com", // domain for the cookie
           secure: true, // accessible through HTTP
           httpOnly: true, // only server can access the cookie
-          sameSite: "none", // enforcement type
+          sameSite: "strict", // enforcement type
           partitioned: false, 
-        }).status(200).json({ message: "Login successful" })  
+        }).status(200).json({ message: "Login successful" }) 
 
     } catch (error) {
         console.error('Error during email verification:', error);
@@ -212,7 +212,7 @@ exports.login = async (req, res) => {
         //   Domain: ".onrender.com", // domain for the cookie
           secure: true, // accessible through HTTP
           httpOnly: true, // only server can access the cookie
-          sameSite: "none", // enforcement type
+          sameSite: "strict", // enforcement type
           partitioned: false, 
         }).status(200).json({ message: "Login successful" })  
        return res.status(200).json({ message: 'Login successful!', token });  
