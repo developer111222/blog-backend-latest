@@ -340,3 +340,21 @@ exports.getprofile = async (req, res) => {
         res.status(500).json({ message: "Server error while fetching user profile" });
     }
 };
+
+
+//-------------------------------get all users------------------------
+
+exports.getUsers = async (req, res) => {
+    try {
+        const getusers = await User.find();
+
+       return res.status(200).json({
+            success: true,
+            count: getusers.length,
+             getusers,
+        });
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ message: "Server error while fetching users" });
+    }
+};

@@ -1,0 +1,6 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/karnalwe/public_html/
+    - /bin/cp * $DEPLOYPATH
+ 
